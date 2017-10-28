@@ -1,0 +1,12 @@
+{
+	"name": "npm-build",
+	"config": {},
+	"version": "0.0.1",
+	"scripts": {
+		"build:ts": "tsc --outDir dst/js src/ts/*",
+		"watch": "onchange * -- npm run build:ts"
+	},
+	"devDependencies": {
+		"onchange": "^3.2.1"
+	}
+}
