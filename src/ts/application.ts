@@ -50,18 +50,22 @@ class Table {
 		return JSONArray;
 	}
 
-	countUnique(key: string) {
+	unique(key: string) {
 		let unique: any = {};
+
 		this.toJSON().forEach( (current, index) {
 				unique[current[key]] = 1 + (unique[current[key]] || 0);
 			} )
+
 		let count = Object.keys(unique).length;
-		return {count: count, unique: unique};
+		return {
+			count: count,
+			unique: unique
+		};
 	}
 
 	log() {
-
-		return `First: ${ this.countUnique("First").count }, Last: ${ this.countUnique("Last").count }`;
+		return `First: ${ this.unique("First").count }, Last: ${ this.unique("Last").count }`;
 	}
 }
 let table = new Table("theTable");
