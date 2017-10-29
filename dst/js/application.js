@@ -44,18 +44,19 @@ var Table = /** @class */ (function () {
         }
         return JSONArray;
     };
-    Table.prototype.countUnique = function (key) {
+    Table.prototype.unique = function (key) {
         var unique = {};
         this.toJSON().forEach(function (current, index) {
             unique[current[key]] = 1 + (unique[current[key]] || 0);
         });
         var count = Object.keys(unique).length;
-        return { count: count, unique: unique };
+        return {
+            count: count,
+            unique: unique
+        };
     };
     Table.prototype.log = function () {
-        return "First: " + this.countUnique("First").count + ", Last: " + this.countUnique("Last").count;
+        return "First: " + this.unique("First").count + ", Last: " + this.unique("Last").count;
     };
     return Table;
 }());
-var table = new Table("theTable");
-console.log(table.log());

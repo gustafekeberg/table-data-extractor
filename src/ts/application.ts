@@ -24,7 +24,7 @@ class Table {
 	private data() {
 		let array: Array<any> = [];
 		let i: number = 0;
-		this.rows().forEach(( item, index ){
+		this.rows().forEach(( item, index ) => {
 			if (index > 0)
 				array.push( item );
 		})
@@ -53,7 +53,7 @@ class Table {
 	unique(key: string) {
 		let unique: any = {};
 
-		this.toJSON().forEach( (current, index) {
+		this.toJSON().forEach( (current, index) => {
 				unique[current[key]] = 1 + (unique[current[key]] || 0);
 			} )
 
@@ -68,5 +68,3 @@ class Table {
 		return `First: ${ this.unique("First").count }, Last: ${ this.unique("Last").count }`;
 	}
 }
-let table = new Table("theTable");
-console.log(table.log());
