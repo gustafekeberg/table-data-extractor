@@ -4,9 +4,10 @@
 	"version": "0.0.1",
 	"scripts": {
 		"build:ts": "tsc --outDir dst/js src/ts/*",
-		"watch": "onchange * -- npm run build:ts"
+		"watch": "onchange './src/ts/*.ts' -- npm run build:ts"
 	},
 	"devDependencies": {
-		"onchange": "^3.2.1"
+		"onchange": "^3.2.1",
+		"typescript": "^2.5.3"
 	}
 }
