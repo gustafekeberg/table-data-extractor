@@ -14,35 +14,35 @@
 		<tr>
 			<td>Arnold</td>
 			<td>Arnegger</td>
-			<td>col no 3</td>
+			<td>1</td>
 		</tr>
 		<tr>
 			<td>Bernold</td>
-			<td>Barnegger</td>
-			<td>col no 3</td>
+			<td>Barqegger</td>
+			<td>2</td>
 		</tr>
 		<tr>
 			<td>Carnold</td>
 			<td>Carrier</td>
-			<td>col no 3</td>
+			<td>3</td>
 		</tr>
 		<tr>
 			<td>Donald</td>
 			<td>Datalogger</td>
-			<td>col no 3</td>
+			<td>4</td>
 		</tr>
 	</table>
 
-	<script src="./dst/js/application.js" type="text/javascript" charset="utf-8" async defer></script>
-	<script>var port = 9001; document.write('<script src="http://'
-    + (location.host || 'localhost').split(':')[0]
-    + ':' + port + '/livereload.js?snipver=1"></'
-    + 'script>')</script>
+	<script src="js/application.js" type="text/javascript" charset="utf-8" async defer></script>
+
 	<script type="text/javascript" charset="utf-8" async defer>
 		window.onload = function() {
-			var table = new Table("theTestTable");
+			var htmlData = new htmlTable("theTestTable");
+			var table = new Table(htmlData.asJSON());
 			console.log(table.test());
 		};
 	</script>
+	
+	<script>var port = 9002; document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':' + port + '/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>
