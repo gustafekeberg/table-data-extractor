@@ -121,38 +121,57 @@ class Table
 
 	match( params ) {
 		// Search:
-		// Find a string in key
+		// Match [rules] found in string given by it's key/header
 
 		let key: string = params[0];
-		let rule: string = params[1];
-		let data: any[] = [];
+		let rules: string[] = params[1];
 
-		// return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
-		// for
+		let data: any[] = [];
+		
+		function match (str, rule) {
+			return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+		}
+		function matchRules (rule, data, key) {
+			let list = [];
+			for (let line of data) {
+				let matched = match(line[key], rule);
+				if (matched)
+					list.push(line);
+			}			
+			return list;
+		}
+		for (let rule of rules) {
+			let matches = matchRules( rule, this.data, key )
+			if (matches)
+				for (let match of matches) {
+					data.push(match);
+				}
+		}
+		let count = data.length;
+		return {
+			count: count,
+			data: data
+		};
 	}
 
 	chain (chain: any[]) {
-		// let us chain filters/methods
+		// let's chain the filters/methods
 		let data: any[] = [this.data];
 
 		for ( var i = 0; i < chain.length; i++ ) {
 			let current = chain[i];
 			data[ data.length ] = new Table( data[ data.length - 1] )[ current[0] ]( current[1]).data;
 		}
-
 		return data[ data.length - 1 ];
 	}
 	test() {
 		let strfy = function(json) {
 			return JSON.stringify(json, null, 2);
 		}
-		// let compared = this.compare("Third", "<=", "3").data;
-		// let newData = new Table(compared);
-		// let newDataCompared = newData.compare("Third", ">=", "2").data;
 		return `compare("Third"): ${ strfy( this.chain([
+			[ "match", ["Last",["*qe*"]] ],
 			[ "compare", ["Third", "<=", "3"] ],
-			[ "compare", ["Third", ">=", "2"] ],
-			[ "match", ["Last","*a*"] ]
+			// [ "compare", ["Third", ">=", "2"] ],
 			]) ) }`;
 	}
 
