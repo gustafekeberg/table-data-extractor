@@ -64,7 +64,7 @@ class Table {
 		};
 	}
 
-	log() {
-		return `First: ${ this.unique("First").count }, Last: ${ this.unique("Last").count }`;
+	test() {
+		return `First: ${ this.unique("First").count }, Last: ${ this.unique("Last").count }, Third: ${ this.unique("Third").count }`;
 	}
 }

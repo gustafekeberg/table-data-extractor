@@ -5,34 +5,43 @@
 	<title>Table > JSON</title>
 </head>
 <body>
-	<table id="theTable">
+	<table id="theTestTable">
 		<tr>
 			<td style="font-weight: bold">First</td>
 			<td style="font-weight: bold">Last</td>
+			<td style="font-weight: bold;">Third</td>
 		</tr>
 		<tr>
 			<td>Arnold</td>
 			<td>Arnegger</td>
+			<td>col no 3</td>
 		</tr>
 		<tr>
 			<td>Bernold</td>
 			<td>Barnegger</td>
+			<td>col no 3</td>
 		</tr>
 		<tr>
 			<td>Carnold</td>
 			<td>Carrier</td>
+			<td>col no 3</td>
 		</tr>
 		<tr>
 			<td>Donald</td>
 			<td>Datalogger</td>
+			<td>col no 3</td>
 		</tr>
 	</table>
 
 	<script src="./dst/js/application.js" type="text/javascript" charset="utf-8" async defer></script>
+	<script>var port = 9001; document.write('<script src="http://'
+    + (location.host || 'localhost').split(':')[0]
+    + ':' + port + '/livereload.js?snipver=1"></'
+    + 'script>')</script>
 	<script type="text/javascript" charset="utf-8" async defer>
 		window.onload = function() {
-			var table = new Table("theTable");
-			console.log(table.log());
+			var table = new Table("theTestTable");
+			console.log(table.test());
 		};
 	</script>
 </body>
