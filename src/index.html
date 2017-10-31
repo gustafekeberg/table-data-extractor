@@ -10,39 +10,59 @@
 			<td style="font-weight: bold">First</td>
 			<td style="font-weight: bold">Last</td>
 			<td style="font-weight: bold;">Third</td>
+			<td style="font-weight: bold;">Ident</td>
 		</tr>
 		<tr>
 			<td>Arnold</td>
 			<td>Arnegger</td>
 			<td>1</td>
+			<td>identical</td>s
 		</tr>
 		<tr>
 			<td>Bernold</td>
 			<td>Barqegger</td>
 			<td>2</td>
+			<td>identical</td>s
 		</tr>
 		<tr>
 			<td>Carnold</td>
 			<td>Carrier</td>
 			<td>3</td>
+			<td>identical</td>s
 		</tr>
 		<tr>
 			<td>Donald</td>
 			<td>Datalogger</td>
 			<td>4</td>
+			<td>identical</td>s
 		</tr>
 	</table>
 
 	<script src="js/application.js" type="text/javascript" charset="utf-8" async defer></script>
 
 	<script type="text/javascript" charset="utf-8" async defer>
-		window.onload = function() {
+		function strfy (str) {
+			return JSON.stringify(str, null, 4);
+		}
+		function doTest() {
 			var htmlData = new htmlTable("theTestTable");
 			var table = new Table(htmlData.asJSON());
-			console.log(table.test());
+
+			var test = table.chain(
+				[
+				[ "match", ["Last",["*qe*"]] ],
+				[ "compare", ["Third", ">=", "1"] ],
+				[ "compare", ["Third", "<=", "4"] ],
+				[ "unique", "Ident"],
+				]
+				);
+			return test;
+		}
+		window.onload = function() {
+			var test = doTest();
+			console.log(strfy(test));
 		};
 	</script>
-	
 	<script>var port = 9002; document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':' + port + '/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>
