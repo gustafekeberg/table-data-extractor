@@ -2,21 +2,21 @@ class htmlTable {
 	table: any;
 	id: string;
 
-	constructor (id: string) {
+	constructor( id: string ) {
 		this.id = id;
-		this.table = document.getElementById(this.id);
+		this.table = document.getElementById( this.id );
 	}
 
 	private rows() {
-		let rows: Array<any> = this.table.querySelectorAll('tr');	
+		let rows: Array<any> = this.table.querySelectorAll( 'tr' );	
 		return rows;
 	}
 
 	private headers() {
-		let headerElements = this.rows()[0].querySelectorAll('td');
+		let headerElements = this.rows()[0].querySelectorAll( 'td' );
 		let headers: Array<string> = [];
-		for (let header of headerElements) {
-			headers.push(header.innerHTML);
+		for ( let header of headerElements ) {
+			headers.push( header.innerHTML );
 		}
 		return headers;
 	}
@@ -24,8 +24,8 @@ class htmlTable {
 	private data() {
 		let array: Array<any> = [];
 		let i: number = 0;
-		this.rows().forEach(( item, index ) => {
-			if (index > 0)
+		this.rows().forEach( ( item, index ) => {
+			if ( index > 0 )
 				array.push( item );
 		})
 		return array;
@@ -35,17 +35,17 @@ class htmlTable {
 		let array: Array<any> = [];
 		let JSONArray: any = [];
 
-		function getContent (array: Array<any>, headers: Array<any> = []) {
+		function getContent( array: Array<any>, headers: Array<any> = [] ) {
 			let object: any = {};
 			headers.forEach((header, index) => {
 				object[header] = array[index].innerHTML;
 			})
 			return object;
 		}
-		for (let row of this.data()) {
-			let cols: Array<any> = row.querySelectorAll('td');
-			let arrOfContent = getContent(cols, this.headers());
-			JSONArray.push(arrOfContent);
+		for ( let row of this.data() ) {
+			let cols: Array<any> = row.querySelectorAll( 'td' );
+			let arrOfContent = getContent( cols, this.headers() );
+			JSONArray.push( arrOfContent );
 		}
 		return JSONArray;
 	}
@@ -54,14 +54,14 @@ class htmlTable {
 class Table
 {
 	data: any;
-	constructor (data) {
+	constructor( data ) {
 		this.data = data;
 	}
-	unique(key: string) {
+	unique( key: string ) {
 		let unique: any = {};
 
 		this.data.forEach( (current, index) => {
-			unique[current[key]] = 1 + (unique[current[key]] || 0);
+			unique[current[key]] = 1 + ( unique [ current[ key ]] || 0);
 		} )
 
 		let count = Object.keys(unique).length;
@@ -81,7 +81,7 @@ class Table
 		
 		let data: any[] = [];
 
-		for (var i = this.data.length - 1; i >= 0; i--) {
+		for(var i = this.data.length - 1; i >= 0; i--) {
 
 			let current: string = this.data[i];
 			let currentKey = current[key];
@@ -110,10 +110,9 @@ class Table
 				break;
 			}
 		}
-		let count = data.length;
 
 		return {
-			count: count,
+			count: data.length,
 			data: data
 		};
 	}
@@ -123,57 +122,50 @@ class Table
 		// Search:
 		// Match [rules] found in string given by it's key/header
 
-		let key: string = params[0];
-		let rules: string[] = params[1];
+		let key: string = params[ 0 ];
+		let rules: string[] = params[ 1 ];
 
 		let data: any[] = [];
 		
-		function match (str, rule) {
-			return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+		function match( str, rule ) {
+			return new RegExp( "^" + rule.split( "*" ).join( ".*" ) + "$" ).test( str );
 		}
-		function matchRules (rule, data, key) {
+		function matchRules( rule, data, key ) {
 			let list = [];
-			for (let line of data) {
-				let matched = match(line[key], rule);
-				if (matched)
-					list.push(line);
+			for ( let line of data ) {
+				let matched = match( line[ key ], rule );
+				if ( matched )
+					list.push( line );
 			}			
 			return list;
 		}
-		for (let rule of rules) {
+		for ( let rule of rules ) {
 			let matches = matchRules( rule, this.data, key )
-			if (matches)
-				for (let match of matches) {
-					data.push(match);
+			if ( matches )
+				for ( let match of matches ) {
+					data.push( match );
 				}
 		}
-		let count = data.length;
+
 		return {
-			count: count,
+			count: data.length,
 			data: data
 		};
 	}
 
-	chain (chain: any[]) {
+	chain( chain: any[] ) {
 		// let's chain the filters/methods
-		let data: any[] = [this.data];
+		let data: any;
+		let filtered: any = this.data;
 
 		for ( var i = 0; i < chain.length; i++ ) {
-			let current = chain[i];
-			data[ data.length ] = new Table( data[ data.length - 1] )[ current[0] ]( current[1]).data;
+			let item = chain[i];
+			let method: string = item[0]; // method to run from class Table
+			let params: string[] = item[1]; // array of params to send to method
+			data = filtered; // use filtered data from last iteration to filter further
+			filtered = new Table( data )[method]( params ).data;
 		}
-		return data[ data.length - 1 ];
+		return filtered;
 	}
-	test() {
-		let strfy = function(json) {
-			return JSON.stringify(json, null, 2);
-		}
-		return `compare("Third"): ${ strfy( this.chain([
-			[ "match", ["Last",["*qe*"]] ],
-			[ "compare", ["Third", "<=", "3"] ],
-			// [ "compare", ["Third", ">=", "2"] ],
-			]) ) }`;
-	}
-
 }
 
