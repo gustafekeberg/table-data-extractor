@@ -1,22 +1,21 @@
 {
-	"name": "npm-build",
-	"config": {},
-	"version": "0.0.1",
-	"scripts": {
-		"build:ts": "tsc --outDir dist/js src/ts/*",
-		"copy:html": "cp src/*.html dist",
-		"watch:ts": "onchange 'src/ts/*.ts' -- npm run build:ts",
-		"watch:html": "onchange 'src/*.html' -- npm run copy:html",
-		"watch:all": "parallelshell 'npm run watch:ts' 'npm run watch:html'",
-		"livereload": "livereload -p 9002 dist/",
-		"serve": "http-server",
-		"serve:livereload": "parallelshell 'npm run livereload' 'npm run serve'"
-	},
-	"devDependencies": {
-		"onchange": "^3.2.1",
-		"typescript": "^2.5.3",
-    "parallelshell": "^2.0.0",
-    "livereload": "latest",
-    "http-server": "latest"
-	}
+  "name": "table-data-analyzer",
+  "version": "0.0.2",
+  "description": "Table data analyzer",
+  "main": "dist/index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustafekeberg/table-data-analyzer.git"
+  },
+  "author": "Gustaf Ekeberg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gustafekeberg/table-data-analyzer/issues"
+  },
+  "homepage": "https://github.com/gustafekeberg/table-data-analyzer#readme"
 }
