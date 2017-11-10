@@ -1,74 +1,40 @@
-class htmlTable {
-	table: any;
-	id: string;
-
-	constructor(id: string) {
-		this.id = id;
-		this.table = document.getElementById(this.id);
-	}
-
-	private rows() {
-		let rows: Array<any> = this.table.querySelectorAll('tr');
-		return rows;
-	}
-
-	private headers() {
-		let headerElements = this.rows()[0].querySelectorAll('td');
-		let headers: Array<string> = [];
-		for (let header of headerElements) {
-			headers.push(header.innerHTML);
-		}
-		return headers;
-	}
-
-	private data() {
-		let array: Array<any> = [];
-		let i: number = 0;
-		this.rows().forEach((item, index) => {
-			if (index > 0)
-				array.push(item);
-		})
-		return array;
-	}
-
-	private asJSON() {
-		let array: Array<any> = [];
-		let JSONArray: any = [];
-
-		function getContent(array: Array<any>, headers: Array<any> = []) {
-			let object: any = {};
-			headers.forEach((header, index) => {
-				object[header] = array[index].innerHTML;
-			})
-			return object;
-		}
-		for (let row of this.data()) {
-			let cols: Array<any> = row.querySelectorAll('td');
-			let arrOfContent = getContent(cols, this.headers());
-			JSONArray.push(arrOfContent);
-		}
-		return JSONArray;
-	}
+export interface Data {
+	count: number;
+	data: any[];
 }
 
-class Table {
-	data: any;
-	constructor(data) {
-		this.data = data;
+export interface TableDataArray {
+	headers: Array<string>;
+	rows: Array<Array<string>>;
+}
+export interface TableRowMap<Type> {
+	[key: string]: Type;
+}
+
+export class TableAnalyzer {
+	data: TableRowMap<string>[];
+
+	constructor(tableData: TableRowMap<string>[]) {
+		this.data = tableData;
 	}
 
-	unique(key: string): number {
+	unique(keys: string[]): Data {
+		let key = keys[0];
 		let unique: any = {};
 
-		this.data.forEach((current, index) => {
+		this.data.forEach((current: any, index) => {
 			unique[current[key]] = 1 + (unique[current[key]] || 0);
 		})
 
 		let count = Object.keys(unique).length;
-		return count;
+
+		return {
+			count: count,
+			data: unique
+		};
 	}
 
-	compare(params): Data {
+	compare(params: any): Data {
 		// Compare:
 		// compOrder` (>=, >, <=, <, =) sort order for value of `key` and compare `value`
 
@@ -80,7 +46,7 @@ class Table {
 
 		for (var i = this.data.length - 1; i >= 0; i--) {
 
-			let current: string = this.data[i];
+			let current: any = this.data[i];
 			let currentKey = current[key];
 			let n = currentKey.localeCompare(value);
 
@@ -115,7 +81,7 @@ class Table {
 	}
 
 
-	match(params): Data {
+	match(params: any): Data {
 		// Search:
 		// Match [rules] found in string given by it's key/header
 
@@ -124,10 +90,10 @@ class Table {
 
 		let data: any[] = [];
 
-		function match(str, rule) {
+		function match(str: any, rule: any) {
 			return new RegExp("^" + rule.split("*").join(".*") + "$").test(str); // https://stackoverflow.com/questions/26246601/wildcard-string-comparison-in-javascript#32402438
 		}
-		function matchRules(rule, data, key) {
+		function matchRules(rule: any, data: any, key: any) {
 			let list = [];
 			for (let line of data) {
 				let matched = match(line[key], rule);
@@ -152,24 +118,32 @@ class Table {
 
 	chain(chain: any[]): Data {
 		// let's chain the filters/methods
-		let data: any;
-		let filtered: any = this.data;
+		let data: TableRowMap<string>[];
+		let filtered: TableRowMap<string>[] = this.data;
 
 		for (var i = 0; i < chain.length; i++) {
 			let item = chain[i];
 			let method: string = item[0]; // method to run from class Table
 			let params: string[] = item[1]; // array of params to send to method
 			data = filtered; // use filtered data from last iteration to filter further
-			filtered = new Table(data)[method](params).data;
+			switch (method) {
+				case 'unique':
+					filtered = new TableAnalyzer(data).unique(params).data;
+					break;
+				case 'compare':
+					filtered = new TableAnalyzer(data).compare(params).data;
+					break;
+				case 'match':
+					filtered = new TableAnalyzer(data).match(params).data;
+					break;
+				default:
+					console.log(`Error: "${method}" is not a valid filter `)
+					break;
+			}
 		}
 		return {
 			count: filtered.length,
 			data: filtered
 		};
 	}
-}
-
-class Data {
-	count: number;
-	data: any[];
 }
