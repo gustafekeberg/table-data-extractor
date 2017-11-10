@@ -2,11 +2,21 @@
   "name": "table-data-analyzer",
   "version": "0.0.2",
   "description": "Table data analyzer",
+  "keywords": [
+    "table data",
+    "analyzer"
+  ],
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "^8.0.50"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch: build": "tsc -w",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
