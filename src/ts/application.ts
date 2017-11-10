@@ -57,7 +57,8 @@ class Table
 	constructor( data ) {
 		this.data = data;
 	}
-	unique( key: string ) {
+
+	unique( key: string ): number {
 		let unique: any = {};
 
 		this.data.forEach( (current, index) => {
@@ -65,13 +66,10 @@ class Table
 		} )
 
 		let count = Object.keys(unique).length;
-		return {
-			count: count,
-			data: unique
-		};
+		return count;
 	}
 
-	compare( params ) {
+	compare( params ): Data {
 		// Compare:
 		// compOrder` (>=, >, <=, <, =) sort order for value of `key` and compare `value`
 		
@@ -118,7 +116,7 @@ class Table
 	}
 
 
-	match( params ) {
+	match( params ): Data {
 		// Search:
 		// Match [rules] found in string given by it's key/header
 
@@ -128,7 +126,7 @@ class Table
 		let data: any[] = [];
 		
 		function match( str, rule ) {
-			return new RegExp( "^" + rule.split( "*" ).join( ".*" ) + "$" ).test( str );
+			return new RegExp( "^" + rule.split( "*" ).join( ".*" ) + "$" ).test( str ); // https://stackoverflow.com/questions/26246601/wildcard-string-comparison-in-javascript#32402438
 		}
 		function matchRules( rule, data, key ) {
 			let list = [];
@@ -153,7 +151,7 @@ class Table
 		};
 	}
 
-	chain( chain: any[] ) {
+	chain( chain: any[] ): Data {
 		// let's chain the filters/methods
 		let data: any;
 		let filtered: any = this.data;
@@ -165,7 +163,14 @@ class Table
 			data = filtered; // use filtered data from last iteration to filter further
 			filtered = new Table( data )[method]( params ).data;
 		}
-		return filtered;
+		return {
+			count: filtered.length,
+			data: filtered
+		};
 	}
 }
 
+class Data {
+	count: number;
+	data: any[];
+}
