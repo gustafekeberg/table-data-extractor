@@ -39,14 +39,11 @@ export class TableAnalyzer {
 
 		this.tableData.forEach((current: any, index) => {
 			unique[current[key]] = 1 + (unique[current[key]] || 0);
-
-			if (unique[current[key]] >= 1)
-				filtered.push(current);
 		})
-
+		let uniques = Object.keys(unique).length;
 		return {
-			count: filtered.length,
-			data: filtered
+			count: uniques,
+			data: []
 		};
 	}
 
@@ -132,19 +129,20 @@ export class TableAnalyzer {
 	}
 
 	private sequence(filter: Filter): Data {
-		let filtered: TableRowMap<string>[] = this.tableData;
-		let data: TableRowMap<string>[] = filtered;
+		let filteredTableData: TableRowMap<string>[] = this.tableData;
+		let data: TableRowMap<string>[] = filteredTableData;
 		let sequence = filter.sequence;
-
+		let filtered: Data = this.data;
 		sequence.forEach(filter => {
-			data = filtered; // use filtered data from last iteration to filter further			
+			data = filteredTableData; // use filtered data from last iteration to filter further			
 			let type = filter.type;
-			filtered = new TableAnalyzer(data).filter(filter).data;
+			filtered = new TableAnalyzer(data).filter(filter);
+			filteredTableData = filtered.data;
 		});
 
 		return {
-			count: filtered.length,
-			data: filtered
+			count: filtered.count,
+			data: filteredTableData
 		};
 	}
 
