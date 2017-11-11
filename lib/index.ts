@@ -17,10 +17,7 @@ export interface Filter {
 	condition: string;
 	value: string;
 	regexps: string[];
-}
-
-export interface ExtendedFilter extends Filter {
-	chain: Filter[];
+	sequence: Filter[];
 	name: string;
 }
 
@@ -37,26 +34,29 @@ export class TableAnalyzer {
 	}
 
 	private unique(key: string): Data {
+		let filtered: TableRowMap<string>[] = [];
 		let unique: any = {};
+
 		this.tableData.forEach((current: any, index) => {
 			unique[current[key]] = 1 + (unique[current[key]] || 0);
+
+			if (unique[current[key]] >= 1)
+				filtered.push(current);
 		})
 
-		let count = Object.keys(unique).length;
-
 		return {
-			count: count,
-			data: unique
+			count: filtered.length,
+			data: filtered
 		};
 	}
 
-	private compare(params: any): Data {
+	private compare(filter: Filter): Data {
 		// Compare:
 		// compOrder` (>=, >, <=, <, =) sort order for value of `key` and compare `value`
 
-		let key: string = params[0];
-		let compOrder: string = params[1];
-		let value: string = params[2];
+		let key: string = filter.key;
+		let condition: string = filter.condition;
+		let value: string = filter.value;
 
 		let data: any[] = [];
 
@@ -66,7 +66,7 @@ export class TableAnalyzer {
 			let currentKey = current[key];
 			let n = currentKey.localeCompare(value);
 
-			switch (compOrder) {
+			switch (condition) {
 				case ">=":
 					if (n == 1 || n == 0) // greater than or equal to value
 						data.push(current);
@@ -95,7 +95,6 @@ export class TableAnalyzer {
 			data: data
 		};
 	}
-
 
 	private match(filter: Filter): Data {
 		// Search:
@@ -132,48 +131,17 @@ export class TableAnalyzer {
 		};
 	}
 
-	sequence(filterList: Filter[]): Data {
-		// let's chain the filters/methods
-		let data: TableRowMap<string>[];
+	private sequence(filter: Filter): Data {
 		let filtered: TableRowMap<string>[] = this.tableData;
+		let data: TableRowMap<string>[] = filtered;
+		let sequence = filter.sequence;
 
-
-		// if filter type == chain
-		filterList.forEach(item => {
+		sequence.forEach(filter => {
 			data = filtered; // use filtered data from last iteration to filter further			
-			let filter = item.filter;
 			let type = filter.type;
-			switch (type) {
-				case 'unique':
-					// filtered = new TableAnalyzer(data).unique(filter.).data;
-					break;
-				case 'compare':
-					break;
-				case 'match':
-					break;
-			}
+			filtered = new TableAnalyzer(data).filter(filter).data;
 		});
 
-		for (var i = 0; i < filterList.length; i++) {
-			let item = filterList[i];
-			let method: string = item[0]; // method to run from class Table
-			let params: string[] = item[1]; // array of params to send to method
-			data = filtered; // use filtered data from last iteration to filter further
-			switch (method) {
-				case 'unique':
-					filtered = new TableAnalyzer(data).unique(params).data;
-					break;
-				case 'compare':
-					filtered = new TableAnalyzer(data).compare(params).data;
-					break;
-				case 'match':
-					filtered = new TableAnalyzer(data).match(params).data;
-					break;
-				default:
-					console.log(`Error: "${method}" is not a valid filter `)
-					break;
-			}
-		}
 		return {
 			count: filtered.length,
 			data: filtered
@@ -189,19 +157,16 @@ export class TableAnalyzer {
 			case 'unique':
 				filteredData = this.unique(filter.key);
 				break;
-				case 'match':
+			case 'match':
 				filteredData = this.match(filter);
 				break;
 			case 'compare':
+				filteredData = this.compare(filter);
+				break;
+			case 'sequence':
+				filteredData = this.sequence(filter);
 				break;
 		}
 		return filteredData;
-
-		function runSequence(filter: ExtendedFilter) {
-			filter.chain.forEach(filter => {
-				runFilter(filter);
-			});
-		}
-		// return filter;
 	}
 }
