@@ -16,7 +16,7 @@ export interface Filter {
 	key: string;
 	condition: string;
 	value: string;
-	regexps: string[];
+	regexp: string;
 	sequence: Filter[];
 	name: string;
 }
@@ -94,37 +94,25 @@ export class TableAnalyzer {
 	}
 
 	private match(filter: Filter): Data {
-		// Search:
-		// Match [rules] found in string given by it's key/header
+		// Match [rules/regexp] found in string given by it's key/header
 
 		let key: string = filter.key;
-		let rules: string[] = filter.regexps;
+		let regexp: string = filter.regexp;
 
-		let data: any[] = [];
-
-		function match(str: any, regexp: any) {
-			return new RegExp(regexp).test(str); // https://stackoverflow.com/questions/26246601/wildcard-string-comparison-in-javascript#32402438
-		}
-		function matchRules(rule: any, data: any, key: any) {
+		function matchRule(rule: string, data: TableRowMap<string>[], key: string) {
 			let list = [];
 			for (let line of data) {
-				let matched = match(line[key], rule);
+				let matched = new RegExp(rule).test(line[key])
 				if (matched)
 					list.push(line);
 			}
 			return list;
 		}
-		for (let rule of rules) {
-			let matches = matchRules(rule, this.tableData, key)
-			if (matches)
-				for (let match of matches) {
-					data.push(match);
-				}
-		}
-
+		let matches = matchRule(regexp, this.tableData, key);
+		
 		return {
-			count: data.length,
-			data: data
+			count: matches.length,
+			data: matches
 		};
 	}
 
@@ -133,6 +121,7 @@ export class TableAnalyzer {
 		let data: TableRowMap<string>[] = filteredTableData;
 		let sequence = filter.sequence;
 		let filtered: Data = this.data;
+		
 		sequence.forEach(filter => {
 			data = filteredTableData; // use filtered data from last iteration to filter further			
 			let type = filter.type;
