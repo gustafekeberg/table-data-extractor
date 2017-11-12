@@ -8,9 +8,10 @@
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
-    "@types/node": "^8.0.50"
+    "typescript": "^2.6.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
