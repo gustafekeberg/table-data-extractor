@@ -2,7 +2,6 @@ export interface Data {
 	count: number;
 	data: any[];
 }
-
 export interface TableDataArray {
 	headers: Array<string>;
 	rows: Array<Array<string>>;
@@ -10,13 +9,11 @@ export interface TableDataArray {
 export interface TableRowMap<Type> {
 	[key: string]: Type;
 }
-
 export interface Filters {
 	name: string;
 	id: string;
 	filter: Filter[];
 }
-
 export interface Filter {
 	type: string;
 	header: string;
@@ -24,7 +21,6 @@ export interface Filter {
 	value: string;
 	regexp: string;
 }
-
 
 export class TableAnalyzer {
 	tableData: TableRowMap<string>[];
