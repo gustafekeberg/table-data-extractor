@@ -7,7 +7,7 @@ Extract data from a table with headers and rows of data:
 | Data 1   | Data 2   |
 | Data 3   | Data 4   |
 
-This library has one method - `filter()` - which returns filtered data from a defined filter.
+This library has one method - `filter()` - which returns filtered data from a defined array of filters that run in sequence.
 
 Filters:
 
@@ -20,15 +20,19 @@ We need more documentation!
 
 sample filter:
 
-```JSON
-{
-	[
-		{
-		"type": "match",
-		"key": "Header 1",
-		"regexp": "^Data (1|3)$"
-		}
-	]
+```JS
+[
+	{
+	"type": "match",
+	"key": "Header 1",
+	"regexp": "^Data (1|3)$"
+	},
+	{
+		"type": "compare",
+		"key": "Header 2",
+		"condition": "<=",
+		"value": "Data 2"
+	}
+]
 
-}
 ```
