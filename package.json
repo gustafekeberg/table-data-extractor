@@ -1,10 +1,10 @@
 {
-  "name": "table-data-analyzer",
+  "name": "table-data-extractor",
   "version": "0.0.2",
-  "description": "Table data analyzer",
+  "description": "Table data extractor",
   "keywords": [
     "table data",
-    "analyzer"
+    "extract"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,12 +21,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gustafekeberg/table-data-analyzer.git"
+    "url": "git+https://github.com/gustafekeberg/table-data-extractor.git"
   },
   "author": "Gustaf Ekeberg",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gustafekeberg/table-data-analyzer/issues"
+    "url": "https://github.com/gustafekeberg/table-data-extractor/issues"
   },
-  "homepage": "https://github.com/gustafekeberg/table-data-analyzer#readme"
+  "homepage": "https://github.com/gustafekeberg/table-data-extractor#readme"
 }
