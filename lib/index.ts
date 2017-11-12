@@ -11,15 +11,20 @@ export interface TableRowMap<Type> {
 	[key: string]: Type;
 }
 
+export interface Filters {
+	name: string;
+	id: string;
+	filter: Filter[];
+}
+
 export interface Filter {
 	type: string;
-	key: string;
+	header: string;
 	condition: string;
 	value: string;
 	regexp: string;
-	sequence: Filter[];
-	name: string;
 }
+
 
 export class TableAnalyzer {
 	tableData: TableRowMap<string>[];
@@ -33,12 +38,12 @@ export class TableAnalyzer {
 		}
 	}
 
-	private unique(key: string): Data {
+	private unique(header: string): Data {
 		let filtered: TableRowMap<string>[] = [];
 		let unique: any = {};
 
 		this.tableData.forEach((current: any, index) => {
-			unique[current[key]] = 1 + (unique[current[key]] || 0);
+			unique[current[header]] = 1 + (unique[current[header]] || 0);
 		})
 		let uniques = Object.keys(unique).length;
 		return {
@@ -51,7 +56,7 @@ export class TableAnalyzer {
 		// Compare:
 		// compOrder` (>=, >, <=, <, =) sort order for value of `key` and compare `value`
 
-		let key: string = filter.key;
+		let header: string = filter.header;
 		let condition: string = filter.condition;
 		let value: string = filter.value;
 
@@ -60,7 +65,7 @@ export class TableAnalyzer {
 		for (var i = this.tableData.length - 1; i >= 0; i--) {
 
 			let current: any = this.tableData[i];
-			let currentKey = current[key];
+			let currentKey = current[header];
 			let n = currentKey.localeCompare(value);
 
 			switch (condition) {
@@ -96,7 +101,7 @@ export class TableAnalyzer {
 	private match(filter: Filter): Data {
 		// Match [rules/regexp] found in string given by it's key/header
 
-		let key: string = filter.key;
+		let key: string = filter.header;
 		let regexp: string = filter.regexp;
 
 		function matchRule(rule: string, data: TableRowMap<string>[], key: string) {
@@ -109,40 +114,21 @@ export class TableAnalyzer {
 			return list;
 		}
 		let matches = matchRule(regexp, this.tableData, key);
-		
+
 		return {
 			count: matches.length,
 			data: matches
 		};
 	}
 
-	private sequence(filter: Filter): Data {
-		let filteredTableData: TableRowMap<string>[] = this.tableData;
-		let data: TableRowMap<string>[] = filteredTableData;
-		let sequence = filter.sequence;
-		let filtered: Data = this.data;
-		
-		sequence.forEach(filter => {
-			data = filteredTableData; // use filtered data from last iteration to filter further			
-			let type = filter.type;
-			filtered = new TableAnalyzer(data).filter(filter);
-			filteredTableData = filtered.data;
-		});
-
-		return {
-			count: filtered.count,
-			data: filteredTableData
-		};
-	}
-
-	filter(filter: Filter) {
+	private selectMethod(filter: Filter) {
 		let filteredData: Data = {
 			count: 0,
 			data: ["Something went wrong!"]
 		};
 		switch (filter.type) {
 			case 'unique':
-				filteredData = this.unique(filter.key);
+				filteredData = this.unique(filter.header);
 				break;
 			case 'match':
 				filteredData = this.match(filter);
@@ -150,10 +136,25 @@ export class TableAnalyzer {
 			case 'compare':
 				filteredData = this.compare(filter);
 				break;
-			case 'sequence':
-				filteredData = this.sequence(filter);
-				break;
 		}
 		return filteredData;
+	}
+
+	public filter(filter: Filters): Data {
+		let filteredTableData: TableRowMap<string>[] = this.tableData;
+		let data: TableRowMap<string>[] = filteredTableData;
+		let sequence: Filter[] = filter.filter;
+		let filtered: Data = this.data;
+		sequence.forEach((filter: Filter) => {
+			data = filteredTableData; // use filtered data from last iteration to filter further			
+			let type = filter.type;
+			filtered = new TableAnalyzer(data).selectMethod(filter);
+			filteredTableData = filtered.data;
+		});
+
+		return {
+			count: filtered.count,
+			data: filteredTableData
+		};
 	}
 }

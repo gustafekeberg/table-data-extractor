@@ -9,22 +9,25 @@ export interface TableDataArray {
 export interface TableRowMap<Type> {
     [key: string]: Type;
 }
+export interface Filters {
+    name: string;
+    id: string;
+    filter: Filter[];
+}
 export interface Filter {
     type: string;
-    key: string;
+    header: string;
     condition: string;
     value: string;
     regexp: string;
-    sequence: Filter[];
-    name: string;
 }
 export declare class TableAnalyzer {
     tableData: TableRowMap<string>[];
     data: Data;
     constructor(tableData: TableRowMap<string>[]);
-    private unique(key);
+    private unique(header);
     private compare(filter);
     private match(filter);
-    private sequence(filter);
-    filter(filter: Filter): Data;
+    private selectMethod(filter);
+    filter(filter: Filters): Data;
 }
