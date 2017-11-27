@@ -50,7 +50,7 @@ export class TableAnalyzer {
 
 	private compare(filter: Filter): Data {
 		// Compare:
-		// compOrder` (>=, >, <=, <, =) sort order for value of `key` and compare `value`
+		// condition `(>=, >, <=, <, =)` sort order for value of `key` and compare `value`
 
 		let header: string = filter.header;
 		let condition: string = filter.condition;
